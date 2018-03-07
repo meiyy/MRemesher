@@ -1,0 +1,12 @@
+AUX_SOURCE_DIRECTORY(. SUB_SOURCES)
+SET(SOURCES ${SOURCES} ${SUB_SOURCES})
+file(GLOB_RECURSE HeaderFiles *.h *.hpp)
+
+INCLUDE_DIRECTORIES(.)
+INCLUDE_DIRECTORIES(./include)
+SOURCE_GROUP("Include Files" FILES ${HeaderFiles}) 
+ADD_EXECUTABLE(LocalRemesher ${SOURCES} ${HeaderFiles})
+
+ADD_DEPENDENCIES(LocalRemesher MeshTools)
+
+TARGET_LINK_LIBRARIES(LocalRemesher MeshTools)
