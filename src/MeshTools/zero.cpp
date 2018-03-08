@@ -1,4 +1,3 @@
-#include <mt_point_base.h>
+#include <point3.h>
+#include <point2.h>
 
-mesh_tools::mt_point_base<double, 3> a;
-auto b = a;
