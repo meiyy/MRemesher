@@ -1,7 +1,4 @@
 #pragma once
-#include <algorithm>
-#include <cmath>
-#include <cassert>
 
 namespace mesh_tools
 {
@@ -10,120 +7,49 @@ namespace mesh_tools
 	public:
 
 		// Constractors, destructor, assignment operator
-		point3()
-		{
-			data_[0] = data_[1] = data_[2] = 0;
-		};
-		point3(const double x, const double y, const double z)
-		{
-			data_[0] = x;
-			data_[1] = y;
-			data_[2] = z;
-		};
+		point3();
 
-		point3(const point3& from)
-		{
-			data_[0] = from[0];
-			data_[1] = from[1];
-			data_[2] = from[2];
-		}
+		point3(double x, double y, double z);
 
-		point3(point3&& from) noexcept
-		{
-			data_[0] = from[0];
-			data_[1] = from[1];
-			data_[2] = from[2];
-		}
+		point3(const point3& from);
+
+		point3(point3&& from) noexcept;
 
 		~point3() = default;
 
-		point3& operator=(const point3& from)
-		{
-			data_[0] = from[0];
-			data_[1] = from[1];
-			data_[2] = from[2];
-			return *this;
-		}
+		point3& operator=(const point3& from);
 
-		point3& operator=(point3&& from) noexcept
-		{
-			data_[0] = from[0];
-			data_[1] = from[1];
-			data_[2] = from[2];
-			return *this;
-		}
+		point3& operator=(point3&& from) noexcept;
 
 		// Operators
-		double& operator[](const int pos)
-		{
-			assert(pos >= 0 && pos < 3);
-			return data_[pos];
-		}
+		double& operator[](int pos);
 
-		const double& operator[](const int pos) const
-		{
-			assert(pos >= 0 && pos < 3);
-			return data_[pos];
-		}
+		const double& operator[](int pos) const;
 
-		point3 operator+(const point3& another_point) const
-		{
-			return { data_[0] + another_point[0], data_[1] + another_point[1], data_[2] + another_point[2] };
-		}
+		point3 operator+(const point3& another_point) const;
 
-		point3 operator-(const point3& another_point) const
-		{
-			return { data_[0] - another_point[0], data_[1] - another_point[1], data_[2] - another_point[2] };
-		}
+		point3 operator-(const point3& another_point) const;
 
-		point3 operator*(const double number) const
-		{
-			return { data_[0] * number, data_[1] * number, data_[2] * number };
-		}
+		point3 operator*(double number) const;
 
 		friend point3 operator*(const double number, const point3& point)
 		{
 			return { point[0] * number, point[1] * number, point[2] * number };
 		}
 
-		point3 operator/(const double number) const
-		{
-			return { data_[0] / number, data_[1] / number, data_[2] / number };
-		}
+		point3 operator/(double number) const;
 
-		double inner_product(const point3& another_point) const
-		{
-			return data_[0] * another_point[0] + data_[1] * another_point[1] + data_[2] * another_point[2];
-		}
+		double inner_product(const point3& another_point) const;
 
-		point3 outer_product(const point3& another_point) const
-		{
-			return {
-				data_[1] * another_point[2] - data_[2] * another_point[1]
-				,data_[2] * another_point[0] - data_[0] * another_point[2]
-				,data_[0] * another_point[1] - data_[1] * another_point[0]
-			};
-		}
+		point3 outer_product(const point3& another_point) const;
 
-		double length2() const
-		{
-			return data_[0] * data_[0] + data_[1] * data_[1] + data_[2] * data_[2];
-		}
+		double length2() const;
 
-		double length() const
-		{
-			return std::sqrt(length2());
-		}
+		double length() const;
 
-		double distance_to(const point3& another_point) const
-		{
-			return (*this - another_point).length();
-		}
+		double distance_to(const point3& another_point) const;
 
-		double distance2_to(const point3& another_point) const
-		{
-			return (*this - another_point).length2();
-		}
+		double distance2_to(const point3& another_point) const;
 
 	private:
 		double data_[3]{};
