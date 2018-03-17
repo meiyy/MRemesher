@@ -1,17 +1,18 @@
 #pragma once
 #include <cassert>
 
-namespace mesh_tools
-{
-	class Facet
-	{
-	public:
-		int Vertex(const unsigned int no) const
-		{
-			assert(no >= 0 && no <= 2);
-			return facet_vertex_[no];
-		}
-	private:
-		unsigned int facet_vertex_[3]{};
-	};
+namespace mesh_tools {
+class Builder;
+
+class Facet {
+  friend class Builder;
+public:
+  unsigned int Halfedfe() const
+    {
+      return halfedge_;
+    }
+private:
+  Facet() = default;
+  unsigned int halfedge_;
+};
 }

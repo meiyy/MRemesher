@@ -1,57 +1,124 @@
 #pragma once
+#include <ostream>
+#include <cassert>
 
-namespace mesh_tools
-{
-	class point3
-	{
-	public:
+namespace mesh_tools {
+class point3 {
+public:
 
-		// Constractors, destructor, assignment operator
-		point3();
+  // Constractors, destructor, assignment operator
+  point3() {
+    data_[0] = data_[1] = data_[2] = 0;
+  }
 
-		point3(double x, double y, double z);
+  point3(const double x, const double y, const double z) {
+    data_[0] = x;
+    data_[1] = y;
+    data_[2] = z;
+  }
 
-		point3(const point3& from);
+  point3(const point3& from) {
+    data_[0] = from[0];
+    data_[1] = from[1];
+    data_[2] = from[2];
+  }
 
-		point3(point3&& from) noexcept;
+  point3(point3&& from) noexcept {
+    data_[0] = from[0];
+    data_[1] = from[1];
+    data_[2] = from[2];
+  }
 
-		~point3() = default;
+  ~point3() = default;
 
-		point3& operator=(const point3& from);
 
-		point3& operator=(point3&& from) noexcept;
+  friend point3 operator*(const double number, const point3& point) {
+    return {point[0] * number, point[1] * number, point[2] * number};
+  }
 
-		// Operators
-		double& operator[](int pos);
 
-		const double& operator[](int pos) const;
+  friend std::ostream& operator<<(std::ostream& out, const point3& point) {
+    out << "(" << point[0] << ", " << point[1] << ", " << point[2] << ")";
+    return out;
+  }
 
-		point3 operator+(const point3& another_point) const;
+  point3& operator=(const point3& from) {
+    data_[0] = from[0];
+    data_[1] = from[1];
+    data_[2] = from[2];
+    return *this;
+  }
 
-		point3 operator-(const point3& another_point) const;
+  point3& operator=(point3&& from) noexcept {
+    data_[0] = from[0];
+    data_[1] = from[1];
+    data_[2] = from[2];
+    return *this;
+  }
 
-		point3 operator*(double number) const;
+  double& operator[](const int pos) {
+    assert(pos >= 0 && pos < 3);
+    return data_[pos];
+  }
 
-		friend point3 operator*(const double number, const point3& point)
-		{
-			return { point[0] * number, point[1] * number, point[2] * number };
-		}
+  const double& operator[](const int pos) const {
+    assert(pos >= 0 && pos < 3);
+    return data_[pos];
+  }
 
-		point3 operator/(double number) const;
+  point3 operator+(const point3& another_point) const {
+    return {
+      data_[0] + another_point[0], data_[1] + another_point[1],
+      data_[2] + another_point[2]
+    };
+  }
 
-		double inner_product(const point3& another_point) const;
+  point3 operator-(const point3& another_point) const {
+    return {
+      data_[0] - another_point[0], data_[1] - another_point[1],
+      data_[2] - another_point[2]
+    };
+  }
 
-		point3 outer_product(const point3& another_point) const;
+  point3 operator*(const double number) const {
+    return {data_[0] * number, data_[1] * number, data_[2] * number};
+  }
 
-		double length2() const;
+  point3 operator/(const double number) const {
+    return {data_[0] / number, data_[1] / number, data_[2] / number};
+  }
 
-		double length() const;
+  double inner_product(const point3& another_point) const {
+    return data_[0] * another_point[0] + data_[1] * another_point[1] + data_[2]
+           *
+           another_point[2];
+  }
 
-		double distance_to(const point3& another_point) const;
+  point3 outer_product(const point3& another_point) const {
+    return {
+      data_[1] * another_point[2] - data_[2] * another_point[1],
+      data_[2] * another_point[0] - data_[0] * another_point[2],
+      data_[0] * another_point[1] - data_[1] * another_point[0]
+    };
+  }
 
-		double distance2_to(const point3& another_point) const;
+  double length2() const {
+    return data_[0] * data_[0] + data_[1] * data_[1] + data_[2] * data_[2];
+  }
 
-	private:
-		double data_[3]{};
-	};
+  double length() const {
+    return std::sqrt(length2());
+  }
+
+  double distance_to(const point3& another_point) const {
+    return (*this - another_point).length();
+  }
+
+  double distance2_to(const point3& another_point) const {
+    return (*this - another_point).length2();
+  }
+
+private:
+  double data_[3]{};
+};
 }
