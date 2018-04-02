@@ -1,41 +1,34 @@
 #pragma once
-#include <vector>
-#include "facet.h"
-#include "vertex.h"
+#include "property.h"
 
 namespace mesh_tools {
 class Builder;
+class FacetIterator;
+class HalfedgeIterator;
+class VertexIterator;
 
 class Surface {
   friend class Builder;
+  friend class FacetIterator;
+  friend class HalfedgeIterator;
+  friend class VertexIterator;
 public:
-  const Facet& FacetAt(const unsigned int facet_no) const {
-    return facets_[facet_no];
+
+  unsigned int num_facets() const {
+    return static_cast<unsigned int>(facets_.size());
   }
 
-  const Vertex& VertexAt(const unsigned int vertex_no) const {
-    return vertices_[vertex_no];
+  unsigned int num_vertices() const {
+    return static_cast<unsigned int>(vertices_.size());
   }
 
-  size_t num_facets() const {
-    return facets_.size();
-  }
-
-  size_t num_vertices() const {
-    return vertices_.size();
-  }
-
-  const std::vector<Facet>& facets_array() const {
-    return static_cast<const std::vector<Facet>&>(facets_);
-  }
-
-  const std::vector<Vertex>& vertices_array() const {
-    return static_cast<const std::vector<Vertex>&>(vertices_);
+  unsigned int num_halfedges() const {
+    return static_cast<unsigned int>(halfedges_.size());
   }
 
 private:
-
-  std::vector<Facet> facets_;
-  std::vector<Vertex> vertices_;
+  FacetStore facets_;
+  VertexStore vertices_;
+  HalfedgeStore halfedges_;
 };
 }

@@ -3,53 +3,53 @@
 #include <cassert>
 
 namespace mesh_tools {
-class point3 {
+class Point3 {
 public:
 
   // Constractors, destructor, assignment operator
-  point3() {
+  Point3() {
     data_[0] = data_[1] = data_[2] = 0;
   }
 
-  point3(const double x, const double y, const double z) {
+  Point3(const double x, const double y, const double z) {
     data_[0] = x;
     data_[1] = y;
     data_[2] = z;
   }
 
-  point3(const point3& from) {
+  Point3(const Point3& from) {
     data_[0] = from[0];
     data_[1] = from[1];
     data_[2] = from[2];
   }
 
-  point3(point3&& from) noexcept {
+  Point3(Point3&& from) noexcept {
     data_[0] = from[0];
     data_[1] = from[1];
     data_[2] = from[2];
   }
 
-  ~point3() = default;
+  ~Point3() = default;
 
 
-  friend point3 operator*(const double number, const point3& point) {
+  friend Point3 operator*(const double number, const Point3& point) {
     return {point[0] * number, point[1] * number, point[2] * number};
   }
 
 
-  friend std::ostream& operator<<(std::ostream& out, const point3& point) {
+  friend std::ostream& operator<<(std::ostream& out, const Point3& point) {
     out << "(" << point[0] << ", " << point[1] << ", " << point[2] << ")";
     return out;
   }
 
-  point3& operator=(const point3& from) {
+  Point3& operator=(const Point3& from) {
     data_[0] = from[0];
     data_[1] = from[1];
     data_[2] = from[2];
     return *this;
   }
 
-  point3& operator=(point3&& from) noexcept {
+  Point3& operator=(Point3&& from) noexcept {
     data_[0] = from[0];
     data_[1] = from[1];
     data_[2] = from[2];
@@ -66,35 +66,35 @@ public:
     return data_[pos];
   }
 
-  point3 operator+(const point3& another_point) const {
+  Point3 operator+(const Point3& another_point) const {
     return {
       data_[0] + another_point[0], data_[1] + another_point[1],
       data_[2] + another_point[2]
     };
   }
 
-  point3 operator-(const point3& another_point) const {
+  Point3 operator-(const Point3& another_point) const {
     return {
       data_[0] - another_point[0], data_[1] - another_point[1],
       data_[2] - another_point[2]
     };
   }
 
-  point3 operator*(const double number) const {
+  Point3 operator*(const double number) const {
     return {data_[0] * number, data_[1] * number, data_[2] * number};
   }
 
-  point3 operator/(const double number) const {
+  Point3 operator/(const double number) const {
     return {data_[0] / number, data_[1] / number, data_[2] / number};
   }
 
-  double inner_product(const point3& another_point) const {
+  double inner_product(const Point3& another_point) const {
     return data_[0] * another_point[0] + data_[1] * another_point[1] + data_[2]
            *
            another_point[2];
   }
 
-  point3 outer_product(const point3& another_point) const {
+  Point3 outer_product(const Point3& another_point) const {
     return {
       data_[1] * another_point[2] - data_[2] * another_point[1],
       data_[2] * another_point[0] - data_[0] * another_point[2],
@@ -110,11 +110,11 @@ public:
     return std::sqrt(length2());
   }
 
-  double distance_to(const point3& another_point) const {
+  double distance_to(const Point3& another_point) const {
     return (*this - another_point).length();
   }
 
-  double distance2_to(const point3& another_point) const {
+  double distance2_to(const Point3& another_point) const {
     return (*this - another_point).length2();
   }
 
