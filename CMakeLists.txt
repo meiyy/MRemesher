@@ -1,4 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
+
+add_definitions(/W4)
 PROJECT(MRemesher)
 
 SET(BINARIES_RELATIVE_PATH /binaries/)
