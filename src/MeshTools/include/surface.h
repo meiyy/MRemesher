@@ -3,12 +3,14 @@
 
 namespace mesh_tools {
 class Builder;
+class Editor;
 class FacetIterator;
 class HalfedgeIterator;
 class VertexIterator;
 
 class Surface {
   friend class Builder;
+  friend class Editor;
   friend class FacetIterator;
   friend class HalfedgeIterator;
   friend class VertexIterator;

@@ -25,6 +25,16 @@ HalfedgeIterator HalfedgeIterator::next() const {
   return HalfedgeIterator(surface_, surface_.halfedges_[halfedge_no_].next);
 }
 
+HalfedgeIterator HalfedgeIterator::next_around_vertex() const
+{
+  return opposite().prev();
+}
+
+HalfedgeIterator HalfedgeIterator::prev_around_vertex() const
+{
+  return next().opposite();
+}
+
 VertexIterator HalfedgeIterator::vertex() const {
   return VertexIterator(surface_, surface_.halfedges_[halfedge_no_].vertex);
 }

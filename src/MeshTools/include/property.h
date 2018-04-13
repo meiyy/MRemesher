@@ -15,6 +15,14 @@ public:
     return static_cast<unsigned int>(property_data_.size());
   }
 
+  void RemoveElement(const unsigned int element_no)
+  {
+    auto last = property_data_.size()-1;
+    assert(element_no<=last);
+    if(element_no!=last)
+      std::swap(property_data_[element_no],property_data_[last]);
+    property_data_.pop_back();
+  }
 protected:
   std::vector<ValueType> property_data_;
 };

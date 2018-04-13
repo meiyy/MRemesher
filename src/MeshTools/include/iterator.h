@@ -1,7 +1,8 @@
 #pragma once
 #include "surface.h"
+
 // TODO: defines a copy assignment operator but does not define a destructor, a copy constructor, a move constructor or a move assignment operator 
-  
+
 
 namespace mesh_tools {
 class HalfedgeIterator;
@@ -14,6 +15,18 @@ public:
     surface_(surface),
     facet_no_(facet_no) {
   }
+
+  FacetIterator(const FacetIterator& facet_iterator):
+    surface_(facet_iterator.surface()),
+    facet_no_(facet_iterator.facet_no()) {
+  }
+
+  FacetIterator(FacetIterator&& facet_iterator) noexcept:
+    surface_(facet_iterator.surface()),
+    facet_no_(facet_iterator.facet_no()) {
+  }
+
+  ~FacetIterator() = default;
 
   bool IsValid() const {
     // TODO: Add a bool var to check if the element is moved or deleted.
@@ -53,6 +66,12 @@ public:
     return *this;
   }
 
+  FacetIterator& operator=(FacetIterator&& another_facet) noexcept {
+    assert((&surface_) == (&(another_facet.surface())));
+    facet_no_ = another_facet.facet_no();
+    return *this;
+  }
+
   Surface& surface() const {
     return surface_;
   }
@@ -75,6 +94,18 @@ public:
     surface_(surface),
     vertex_no_(vertex_no) {
   }
+
+  VertexIterator(const VertexIterator& vertex_iterator):
+    surface_(vertex_iterator.surface()),
+    vertex_no_(vertex_iterator.vertex_no()) {
+  }
+
+  VertexIterator(VertexIterator&& vertex_iterator) noexcept:
+    surface_(vertex_iterator.surface()),
+    vertex_no_(vertex_iterator.vertex_no()) {
+  }
+
+  ~VertexIterator() = default;
 
   bool IsValid() const {
     // TODO: Add a bool var to check if the element is moved or deleted.
@@ -100,17 +131,23 @@ public:
     return tmp;
   }
 
-  bool operator==(const VertexIterator& another_facet) const {
-    return vertex_no_ == another_facet.vertex_no();
+  bool operator==(const VertexIterator& another_vertex) const {
+    return vertex_no_ == another_vertex.vertex_no();
   }
 
-  bool operator!=(const VertexIterator& another_facet) const {
-    return !(*this == another_facet);
+  bool operator!=(const VertexIterator& another_vertex) const {
+    return !(*this == another_vertex);
   }
 
-  VertexIterator& operator=(const VertexIterator& another_facet) {
-    assert((&surface_) == (&(another_facet.surface())));
-    vertex_no_ = another_facet.vertex_no();
+  VertexIterator& operator=(const VertexIterator& another_vertex) {
+    assert((&surface_) == (&(another_vertex.surface())));
+    vertex_no_ = another_vertex.vertex_no();
+    return *this;
+  }
+
+  VertexIterator& operator=(VertexIterator&& another_vertex) noexcept {
+    assert((&surface_) == (&(another_vertex.surface())));
+    vertex_no_ = another_vertex.vertex_no();
     return *this;
   }
 
@@ -135,6 +172,10 @@ public:
 
   HalfedgeIterator next() const;
 
+  HalfedgeIterator next_around_vertex() const;
+
+  HalfedgeIterator prev_around_vertex() const;
+
   VertexIterator vertex() const;
 
   FacetIterator facet() const;
@@ -143,6 +184,18 @@ public:
     surface_(surface),
     halfedge_no_(halfedge_no) {
   }
+
+  HalfedgeIterator(const HalfedgeIterator& vertex_iterator):
+    surface_(vertex_iterator.surface()),
+    halfedge_no_(vertex_iterator.halfedge_no()) {
+  }
+
+  HalfedgeIterator(HalfedgeIterator&& vertex_iterator) noexcept:
+    surface_(vertex_iterator.surface()),
+    halfedge_no_(vertex_iterator.halfedge_no()) {
+  }
+
+  ~HalfedgeIterator() = default;
 
   bool IsValid() const {
     // TODO: Add a bool var to check if the element is moved or deleted.
@@ -168,17 +221,23 @@ public:
     return tmp;
   }
 
-  bool operator==(const HalfedgeIterator& another_facet) const {
-    return halfedge_no_ == another_facet.halfedge_no();
+  bool operator==(const HalfedgeIterator& another_halfedge) const {
+    return halfedge_no_ == another_halfedge.halfedge_no();
   }
 
-  bool operator!=(const HalfedgeIterator& another_facet) const {
-    return !(*this == another_facet);
+  bool operator!=(const HalfedgeIterator& another_halfedge) const {
+    return !(*this == another_halfedge);
   }
 
-  HalfedgeIterator& operator=(const HalfedgeIterator& another_facet) {
-    assert((&surface_) == (&(another_facet.surface())));
-    halfedge_no_ = another_facet.halfedge_no();
+  HalfedgeIterator& operator=(const HalfedgeIterator& another_halfedge) {
+    assert((&surface_) == (&(another_halfedge.surface())));
+    halfedge_no_ = another_halfedge.halfedge_no();
+    return *this;
+  }
+
+  HalfedgeIterator& operator=(HalfedgeIterator&& another_halfedge) noexcept {
+    assert((&surface_) == (&(another_halfedge.surface())));
+    halfedge_no_ = another_halfedge.halfedge_no();
     return *this;
   }
 
