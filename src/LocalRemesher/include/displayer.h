@@ -37,9 +37,9 @@ public:
 private:
   Displayer() = default;
 
-  void initCallBackFunctions();
+  static void initCallBackFunctions();
 
-  void initParameters();
+  static void initParameters();
 
   static void getScaleSize();
 

@@ -21,7 +21,11 @@ void Displayer::init(int &argc, char** argv, const char *title, int width, int h
 {
   width_ = width;
   height_ = height;
-
+  for(int i=0;i<argc;i++)
+  {
+    std::cerr << argv[i] << std::endl;
+  }
+  argc--;
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
   glutInitWindowSize(width_, height_);
@@ -54,11 +58,25 @@ void Displayer::initCallBackFunctions()
 
 void Displayer::initParameters()
 {
+  GLfloat light_position[] = { 1.0, 1.0, 1.0, 0.0 };
+  GLfloat white_light[] = { 1.0, 1.0, 1.0, 1.0 };
+  GLfloat lmodel_ambient[] = { 0.1, 0.1, 0.1, 1.0 };
+  glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+  glLightfv(GL_LIGHT0, GL_DIFFUSE, white_light);
+  glLightfv(GL_LIGHT0, GL_SPECULAR, white_light);
+  glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lmodel_ambient);
+
+  glutReportErrors();
+
+  glEnable(GL_COLOR_MATERIAL);
+  glEnable(GL_LIGHTING);
+  glEnable(GL_LIGHT0);
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LEQUAL);
   glEnable(GL_CULL_FACE);
-  glCullFace(GL_FRONT);
-
+  glFrontFace(GL_CCW);
+  glCullFace(GL_BACK);
+  glShadeModel(GL_SMOOTH);
   glLineWidth(3);
   glPointSize(4);
 }
@@ -96,6 +114,7 @@ void Displayer::CallBackReshape(int width, int height)
 {
   width_ = width;
   height_ = height;
+  glViewport(0, 0, width_, height_);
   getScaleSize();
   glutPostRedisplay();
 }
@@ -157,7 +176,6 @@ void Displayer::CallBackKeyboard(unsigned char key, int x, int y)
 
 void Displayer::CallBackDisplay()
 {
-  glViewport(0, 0, width_, height_);
   glClearColor(1., 1., 1., 1.);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -168,6 +186,8 @@ void Displayer::CallBackDisplay()
   glRotated(rotate_b_, 1, 0, 0);
   glRotated(rotate_a_, 0, 1, 0);
   glTranslated(-center[0], -center[1], -center[2]);
+
+  initParameters();
 
   for(auto list:drawLists_)
     glCallList(list);
