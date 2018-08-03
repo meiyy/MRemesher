@@ -118,6 +118,11 @@ public:
     return (*this - another_point).length2();
   }
 
+  Point3 normalize() const 
+  {
+    return *this / length();
+  }
+
 private:
   double data_[3]{};
 };

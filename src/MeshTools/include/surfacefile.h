@@ -93,13 +93,17 @@ namespace mesh_tools
           {
             file_ >> i;
             char next_char = ' ';
-            while (next_char==' '|| next_char=='/')
+            while (next_char==' ')
               next_char=static_cast<char>(file_.get() & 0xff);
-            file_.putback(next_char);
-            int ignore;
-            file_ >> ignore;
+            if(next_char=='/')
+            {
+              int ignore;
+              file_ >> ignore;
+            }
+            else 
+              file_.putback(next_char);
           }
-          builder.AddFacet( x[0]-1, x[1]-1, x[2]-1 );
+          builder.AddFacet( x[2]-1, x[1]-1, x[0]-1 );
         }
         else
         {

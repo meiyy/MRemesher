@@ -4,6 +4,7 @@
 #include "boundingbox.h"
 #include "basicmath.h"
 #include <iostream>
+#include <cmath>
 
 Displayer Displayer::instance_;
 int Displayer::width_ = 860, Displayer::height_ = 640;
@@ -12,10 +13,14 @@ std::vector<unsigned int> Displayer::drawLists_;
 std::map<unsigned char, void(*)(int, int)> Displayer::keyboard_functions_;
 int Displayer::mouse_down_button_=GL_LEFT, Displayer::mouse_down_x_=0, Displayer::mouse_down_y_=0;
 double Displayer::mouse_down_a_ = 0, Displayer::mouse_down_b_ = 0;
-double Displayer::rotate_a_= 0, Displayer::rotate_b_=0;
+double Displayer::rotate_a_= M_PI/4, Displayer::rotate_b_= M_PI / 4;
 double Displayer::translate_a_=0, Displayer::translate_b_=0;
 mesh_tools::BoundingBox Displayer::box;
 double Displayer::modelSize=1;
+
+mesh_tools::Point3 camera,origin,mouse_down_origin;
+GLfloat light_x_ = 0.1f, light_y_ = 0.1f, light_z_ = 0.2f;
+
 
 void Displayer::init(int &argc, char** argv, const char *title, int width, int height)
 {
@@ -54,31 +59,46 @@ void Displayer::initCallBackFunctions()
   glutKeyboardFunc(CallBackKeyboard);
 
   glutDisplayFunc(CallBackDisplay);
+
+  bindKey('a', [](int, int) {light_x_ -= 0.05f; std::cerr << light_x_ << "," << light_y_ << "," << light_z_ << std::endl; });
+  bindKey('d', [](int, int) {light_x_ += 0.05f; std::cerr << light_x_ << "," << light_y_ << "," << light_z_ << std::endl; });
+  bindKey('w', [](int, int) {light_y_ += 0.05f; std::cerr << light_x_ << "," << light_y_ << "," << light_z_ << std::endl; });
+  bindKey('s', [](int, int) {light_y_ -= 0.05f; std::cerr << light_x_ << "," << light_y_ << "," << light_z_ << std::endl; });
+  bindKey('z', [](int, int) {light_z_ -= 0.05f; std::cerr << light_x_ << "," << light_y_ << "," << light_z_ << std::endl; });
+  bindKey('x', [](int, int) {light_z_ += 0.05f; std::cerr << light_x_ << "," << light_y_ << "," << light_z_ << std::endl; });
 }
 
 void Displayer::initParameters()
 {
-  GLfloat light_position[] = { 1.0, 1.0, 1.0, 0.0 };
-  GLfloat white_light[] = { 1.0, 1.0, 1.0, 1.0 };
-  GLfloat lmodel_ambient[] = { 0.1, 0.1, 0.1, 1.0 };
-  glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+  GLfloat white_light[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+  GLfloat lmodel_ambient[] = { 0.1f, 0.1f, 0.1f, 1.0f };
   glLightfv(GL_LIGHT0, GL_DIFFUSE, white_light);
   glLightfv(GL_LIGHT0, GL_SPECULAR, white_light);
-  glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lmodel_ambient);
-
-  glutReportErrors();
-
-  glEnable(GL_COLOR_MATERIAL);
+  glLightfv(GL_LIGHT0, GL_AMBIENT, lmodel_ambient);
   glEnable(GL_LIGHTING);
   glEnable(GL_LIGHT0);
+  
+  glEnable(GL_AUTO_NORMAL);
+  glEnable(GL_COLOR_MATERIAL);
+  glEnable(GL_NORMALIZE);
   glEnable(GL_DEPTH_TEST);
-  glDepthFunc(GL_LEQUAL);
   glEnable(GL_CULL_FACE);
+  glEnable(GL_BLEND);
+  glEnable(GL_POINT_SMOOTH);
+  glEnable(GL_LINE_SMOOTH);
+  glEnable(GL_POLYGON_SMOOTH);
+  glEnable(GL_POLYGON_OFFSET_FILL);
+
+  glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
+  glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+  glHint(GL_POLYGON_SMOOTH_HINT, GL_FASTEST);
+
+  glPolygonOffset(1.0, 2.0);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glDepthFunc(GL_LEQUAL);
   glFrontFace(GL_CCW);
   glCullFace(GL_BACK);
-  glShadeModel(GL_SMOOTH);
-  glLineWidth(3);
-  glPointSize(4);
+  glShadeModel(GL_FLAT);
 }
 
 void Displayer::getScaleSize()
@@ -93,8 +113,8 @@ void Displayer::getScaleSize()
       + scale_times * modelSize / 2 * width_ / height_,
       - scale_times * modelSize / 2, 
       + scale_times * modelSize / 2,
-      - modelSize / 2,
-      + modelSize / 2
+      - 10000,
+      + 10000
     );
   }
   else
@@ -147,6 +167,7 @@ void Displayer::CallBackMouse(int button, int status, int x, int y)
       mouse_down_y_ = y;
       mouse_down_a_ = translate_a_;
       mouse_down_b_ = translate_b_;
+      mouse_down_origin = origin;
     }
     else if (button == GLUT_RIGHT_BUTTON)
     {
@@ -181,17 +202,41 @@ void Displayer::CallBackDisplay()
 
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
-  auto center = box.center();
-  glTranslated( translate_a_,-translate_b_, 0);
-  glRotated(rotate_b_, 1, 0, 0);
-  glRotated(rotate_a_, 0, 1, 0);
-  glTranslated(-center[0], -center[1], -center[2]);
 
-  initParameters();
+  GLfloat light_position[] = { light_x_, light_y_, light_z_, 0.0f };
+  glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+  camera = origin + mesh_tools::Point3(cos(rotate_a_)*cos(rotate_b_), sin(rotate_b_), sin(rotate_a_)*cos(rotate_b_));
+  gluLookAt(camera[0], camera[1], camera[2], origin[0], origin[1], origin[2], 0, 1, 0);
 
-  for(auto list:drawLists_)
-    glCallList(list);
+  glPushMatrix();
+  {
+    glPushMatrix();
+    glTranslated(0.3, 0.3, 0.3);
+    //glutSolidSphere(0.05, 5, 5);
+    glPopMatrix();
 
+    glColor3d(1, 0, 0);
+    glBegin(GL_LINES);
+    glVertex3d(0, 0, 0);
+    glVertex3d(10, 0, 0);
+    glEnd();
+
+    glColor3d(0, 1, 0);
+    glBegin(GL_LINES);
+    glVertex3d(0, 0, 0);
+    glVertex3d(0, 10, 0);
+    glEnd();
+
+    glColor3d(0, 0, 1);
+    glBegin(GL_LINES);
+    glVertex3d(0, 0, 0);
+    glVertex3d(0, 0, 10);
+    glEnd();
+
+    for (auto list : drawLists_)
+      glCallList(list);
+  }
+  glPopMatrix();
   glutSwapBuffers();
 }
 
@@ -200,21 +245,24 @@ void Displayer::CallBackMotion(int x, int y)
   int dx = x - mouse_down_x_, dy = y - mouse_down_y_;
   if (mouse_down_button_ == GLUT_LEFT_BUTTON)
   {
-    translate_a_ = mouse_down_a_ + dx * modelSize * scale_times * 0.001;
-    translate_b_ = mouse_down_b_ + dy * modelSize * scale_times * 0.001;
+    auto camera_offset = mesh_tools::Point3(cos(rotate_a_)*cos(rotate_b_), sin(rotate_b_), sin(rotate_a_)*cos(rotate_b_));
+    auto x_offset = mesh_tools::Point3(-sin(rotate_a_) , 0, cos(rotate_a_));
+    auto y_offset = x_offset.outer_product(camera_offset);
+    origin = mouse_down_origin + x_offset * dx*modelSize * scale_times*0.001 + y_offset * dy*modelSize * scale_times*0.001;
   }
   else if (mouse_down_button_ == GLUT_RIGHT_BUTTON)
   {
-    rotate_a_ = mouse_down_a_ + dx * 0.3;
-    rotate_b_ = mouse_down_b_ + dy * 0.3;
-    while (rotate_a_ > 360)
-      rotate_a_ -= 360;
+    constexpr double eps = 1e-8;
+    rotate_a_ = mouse_down_a_ + dx * 0.01;
+    rotate_b_ = mouse_down_b_ + dy * 0.01;
+    while (rotate_a_ > M_PI*2)
+      rotate_a_ -= M_PI*2;
     while (rotate_a_ < 0)
-      rotate_a_ += 360;
-    while (rotate_b_ > 360)
-      rotate_b_ -= 360;
-    while (rotate_b_ < 0)
-      rotate_b_ += 360;
+      rotate_a_ += M_PI*2;
+    while (rotate_b_ > M_PI/2- eps)
+      rotate_b_ = M_PI/2- eps;
+    while (rotate_b_ < -M_PI / 2+ eps)
+      rotate_b_ = -M_PI / 2+ eps;
   }
   glutPostRedisplay();
 }
@@ -227,6 +275,7 @@ unsigned Displayer::addDrawableObject(const DrawableObject &object)
     + mesh_tools::square(box.width())
     + mesh_tools::square(box.height())
   );
+  origin = box.center() * -1;
   unsigned int object_no = glGenLists(1);
   glNewList(object_no, GL_COMPILE);
   object.draw();
@@ -239,6 +288,8 @@ unsigned Displayer::addDrawableObject(const DrawableObject &object)
 void DrawableObject::drawTriangle(const mesh_tools::Point3 & point_a, const mesh_tools::Point3 & point_b, const mesh_tools::Point3 & point_c)const
 {
   glBegin(GL_TRIANGLES);
+  auto normal = (point_b - point_a).outer_product(point_c - point_b);
+  glNormal3d(normal[0] , normal[1], normal[2]);
   glVertex3d(point_a[0], point_a[1], point_a[2]);
   glVertex3d(point_b[0], point_b[1], point_b[2]);
   glVertex3d(point_c[0], point_c[1], point_c[2]);
@@ -252,15 +303,26 @@ void DrawableObject::setColor(double red, double green, double blue, double alph
 
 void DrawableObject::drawLine(const mesh_tools::Point3 & point_a, const mesh_tools::Point3 & point_b)const
 {
+  GLboolean isLightOpen;
+  glGetBooleanv(GL_LIGHTING, &isLightOpen);
+  glDisable(GL_LIGHTING);
+  glDepthRange(0.0, 0.998);
   glBegin(GL_LINES);
   glVertex3d(point_a[0], point_a[1], point_a[2]);
   glVertex3d(point_b[0], point_b[1], point_b[2]);
   glEnd();
+  glDepthRange(0.0, 1.);
+  if (isLightOpen)
+    glEnable(GL_LIGHTING);
 }
 
 void DrawableObject::drawPoint(const mesh_tools::Point3 & point)const
 {
+  GLboolean isLightOpen;
+  glGetBooleanv(GL_LIGHTING, &isLightOpen);
   glBegin(GL_POINTS);
   glVertex3d(point[0], point[1], point[2]);
   glEnd();
+  if (isLightOpen)
+    glEnable(GL_LIGHTING);
 }

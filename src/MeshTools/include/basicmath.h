@@ -2,9 +2,11 @@
 
 namespace mesh_tools
 {
-  template<class Type>
-  Type square(Type number)
-  {
-    return number * number;
-  }
+#define M_PI (3.14159265358979323846)
+
+template<class Type>
+Type square(Type number)
+{
+  return number * number;
+}
 }
