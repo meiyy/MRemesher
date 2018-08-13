@@ -4,7 +4,6 @@
 #include <algorithm>
 #include "propertystorage.h"
 #include "surfaceelement.h"
-
 namespace mesh_tools
 {
 
@@ -109,6 +108,11 @@ public:
   {
     assert(!IsFree(id));
     return base_info_[id].id;
+  }
+
+  unsigned int ElementBegin()
+  {
+    return element_head_;
   }
 protected:
 

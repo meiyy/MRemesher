@@ -89,16 +89,18 @@ void Displayer::initParameters()
   glEnable(GL_POLYGON_SMOOTH);
   glEnable(GL_POLYGON_OFFSET_FILL);
 
-  glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
-  glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-  glHint(GL_POLYGON_SMOOTH_HINT, GL_FASTEST);
+  //glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
+  //glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+  //glHint(GL_POLYGON_SMOOTH_HINT, GL_FASTEST);
 
   glPolygonOffset(1.0, 2.0);
+  
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glDepthFunc(GL_LEQUAL);
   glFrontFace(GL_CCW);
   glCullFace(GL_BACK);
   glShadeModel(GL_FLAT);
+  glPointSize(3);
 }
 
 void Displayer::getScaleSize()
@@ -306,12 +308,12 @@ void DrawableObject::drawLine(const mesh_tools::Point3 & point_a, const mesh_too
   GLboolean isLightOpen;
   glGetBooleanv(GL_LIGHTING, &isLightOpen);
   glDisable(GL_LIGHTING);
-  glDepthRange(0.0, 0.998);
+ // glDepthRange(0.0, 0.998);
   glBegin(GL_LINES);
   glVertex3d(point_a[0], point_a[1], point_a[2]);
   glVertex3d(point_b[0], point_b[1], point_b[2]);
   glEnd();
-  glDepthRange(0.0, 1.);
+ // glDepthRange(0.0, 1.);
   if (isLightOpen)
     glEnable(GL_LIGHTING);
 }

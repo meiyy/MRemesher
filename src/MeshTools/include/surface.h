@@ -39,6 +39,7 @@ public:
   auto& halfedge_manager() {
     return halfedge_manager_;
   }
+
 private:
   FacetManager facet_manager_;
   VertexManager vertex_manager_;

@@ -8,7 +8,13 @@ class FacetIterator {
 public:
   HalfedgeIterator halfedge() const;
 
-  explicit FacetIterator(Surface& surface, const unsigned int facet_no):
+  explicit FacetIterator(Surface& surface) :
+    surface_(surface),
+    facet_no_(surface.facet_manager().ElementBegin()),
+    unique_id_(facet_no_ != INVALID_ID ? surface_.facet_manager_.UniqueID(facet_no_) : INVALID_ID) {
+  }
+
+  FacetIterator(Surface& surface, const unsigned int facet_no):
     surface_(surface),
     facet_no_(facet_no),
     unique_id_(facet_no_ != INVALID_ID ? surface_.facet_manager_.UniqueID(facet_no_) : INVALID_ID){
@@ -107,7 +113,13 @@ public:
     return surface_.vertex_manager_.VertexAt(vertex_no_).position;
   }
 
-  explicit VertexIterator(Surface& surface, const unsigned int vertex_no):
+  explicit VertexIterator(Surface& surface) :
+    surface_(surface),
+    vertex_no_(surface.vertex_manager().ElementBegin()),
+    unique_id_(vertex_no_ != INVALID_ID ? surface_.vertex_manager_.UniqueID(vertex_no_) : INVALID_ID) {
+  }
+
+  VertexIterator(Surface& surface, const unsigned int vertex_no):
     surface_(surface),
     vertex_no_(vertex_no),
     unique_id_(vertex_no_ != INVALID_ID ? surface_.vertex_manager_.UniqueID(vertex_no_) : INVALID_ID){
@@ -234,7 +246,13 @@ public:
     return FacetIterator(surface_, surface_.halfedge_manager_.HalfedgeAt(halfedge_no_).facet);
   }
 
-  explicit HalfedgeIterator(Surface& surface, const unsigned int halfedge_no) :
+  explicit HalfedgeIterator(Surface& surface) :
+    surface_(surface),
+    halfedge_no_(surface.halfedge_manager().ElementBegin()),
+    unique_id_(halfedge_no_ != INVALID_ID ? surface_.halfedge_manager_.UniqueID(halfedge_no_) : INVALID_ID) {
+  }
+
+  HalfedgeIterator(Surface& surface, const unsigned int halfedge_no) :
     surface_(surface),
     halfedge_no_(halfedge_no),
     unique_id_(halfedge_no_ != INVALID_ID ? surface_.halfedge_manager_.UniqueID(halfedge_no_) : INVALID_ID) {
