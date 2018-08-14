@@ -118,8 +118,7 @@ public:
     return (*this - another_point).length2();
   }
 
-  Point3 normalize() const 
-  {
+  Point3 normalize() const {
     return *this / length();
   }
 
