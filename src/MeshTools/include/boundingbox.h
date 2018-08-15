@@ -48,6 +48,12 @@ public:
     }
   }
 
+  void AddBoundingBox(const BoundingBox &another_box)
+  {
+    AddPoint3({another_box.x_min(),another_box.y_min(),another_box.z_min()});
+    AddPoint3({another_box.x_max(),another_box.y_max(),another_box.z_max()});
+  }
+
   double x_min() const {
     return x_min_;
   }
