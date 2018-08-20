@@ -10,7 +10,7 @@ namespace mesh_tools {
 class PropertyManager {
 public:
 
-  PropertyManager()
+  PropertyManager()noexcept
     : free_list_head_(INVALID_ID),
       element_head_(INVALID_ID),
       element_tail_(INVALID_ID),
@@ -90,7 +90,7 @@ public:
   void RemoveProperty(PropertyStorage<ValueType>* property) {
     auto position = std::find(property_list_.begin(), property_list_.end(),
                               property);
-    property_list_.erase(position);
+    auto pos = property_list_.erase(position);
     delete property;
   }
 
@@ -99,7 +99,7 @@ public:
     return base_info_[id].id;
   }
 
-  unsigned int ElementBegin() {
+  unsigned int ElementBegin()const {
     return element_head_;
   }
 
@@ -125,7 +125,7 @@ protected:
 
 class FacetManager : public PropertyManager {
 public:
-  FacetManager() {
+  FacetManager()noexcept {
     facets_ = CreateProperty<FacetElement>();
   }
 
@@ -148,7 +148,7 @@ private:
 
 class HalfedgeManager : public PropertyManager {
 public:
-  HalfedgeManager() {
+  HalfedgeManager()noexcept {
     halfedges_ = CreateProperty<HalfedgeElement>();
   }
 
@@ -182,7 +182,7 @@ private:
 
 class VertexManager : public PropertyManager {
 public:
-  VertexManager() {
+  VertexManager()noexcept {
     vertices_ = CreateProperty<VertexElement>();
   }
 

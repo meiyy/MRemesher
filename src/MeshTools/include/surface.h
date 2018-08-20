@@ -41,6 +41,7 @@ public:
   }
 
 private:
+
   FacetManager facet_manager_;
   VertexManager vertex_manager_;
   HalfedgeManager halfedge_manager_;

@@ -108,7 +108,7 @@ public:
       file_ << "v " << i.position()[0] << " " << i.position()[1] << " " << i.
         position()[2] << std::endl;
     }
-    for (FacetIterator i(surface, 0); !i.IsEnd(); ++i) {
+    for (FacetIterator i(surface); !i.IsEnd(); ++i) {
       file_ << "f";
       auto j = i.halfedge();
       do {

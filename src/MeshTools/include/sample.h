@@ -46,7 +46,7 @@ public:
     }
   }
 
-  const auto& Points() const {
+  auto& Points() const {
     return points_;
   }
 

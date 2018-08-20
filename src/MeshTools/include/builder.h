@@ -48,7 +48,7 @@ public:
       vertex_end_halfedges(surface_.num_vertices());
     std::vector<unsigned int> halfedge_start(surface_.num_halfedges());
 
-    for (HalfedgeIterator i(surface_, 0); !i.IsEnd(); ++i) {
+    for (HalfedgeIterator i(surface_); !i.IsEnd(); ++i) {
       halfedge_start[i.next().halfedge_no()] = i.vertex().vertex_no();
       vertex_end_halfedges[i.vertex().vertex_no()].
         emplace_back(i.halfedge_no());

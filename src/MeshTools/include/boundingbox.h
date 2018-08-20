@@ -5,22 +5,22 @@
 namespace mesh_tools {
 class BoundingBox {
 public:
-  BoundingBox()
+  BoundingBox()noexcept
     : x_min_(DBL_MAX),
-      x_max_(DBL_MIN),
+      x_max_(-DBL_MAX),
       y_min_(DBL_MAX),
-      y_max_(DBL_MIN),
+      y_max_(-DBL_MAX),
       z_min_(DBL_MAX),
-      z_max_(DBL_MIN) {
+      z_max_(-DBL_MAX) {
   }
 
   explicit BoundingBox(Surface& surface)
     : x_min_(DBL_MAX),
-      x_max_(DBL_MIN),
+      x_max_(-DBL_MAX),
       y_min_(DBL_MAX),
-      y_max_(DBL_MIN),
+      y_max_(-DBL_MAX),
       z_min_(DBL_MAX),
-      z_max_(DBL_MIN) {
+      z_max_(-DBL_MAX) {
     AddSurface(surface);
   }
 
@@ -28,9 +28,9 @@ public:
     x_min_ = DBL_MAX;
     y_min_ = DBL_MAX;
     z_min_ = DBL_MAX;
-    x_max_ = DBL_MIN;
-    y_max_ = DBL_MIN;
-    z_max_ = DBL_MIN;
+    x_max_ = -DBL_MAX;
+    y_max_ = -DBL_MAX;
+    z_max_ = -DBL_MAX;
   }
 
   void AddPoint3(const Point3& point3) {
@@ -43,7 +43,7 @@ public:
   }
 
   void AddSurface(Surface& surface) {
-    for (VertexIterator i(surface, 0); !i.IsEnd(); ++i) {
+    for (VertexIterator i(surface); !i.IsEnd(); ++i) {
       AddPoint3(i.position());
     }
   }

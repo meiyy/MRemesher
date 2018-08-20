@@ -11,7 +11,7 @@ struct SurfaceElement {
   unsigned int next;
   unsigned int prev;
 
-  SurfaceElement()
+  SurfaceElement()noexcept
     : id(INVALID_ID),
       next(INVALID_ID),
       prev(INVALID_ID) {
@@ -24,7 +24,7 @@ struct SurfaceElement {
 struct FacetElement {
   unsigned int halfedge;
 
-  FacetElement()
+  FacetElement()noexcept
     : halfedge(INVALID_ID) {
   }
 
@@ -40,7 +40,7 @@ struct VertexElement {
   unsigned int halfedge;
   Point3 position;
 
-  VertexElement()
+  VertexElement()noexcept
     : halfedge(INVALID_ID),
       position(Point3()) {
   }
@@ -61,7 +61,7 @@ struct HalfedgeElement {
   unsigned int vertex;
   unsigned int facet;
 
-  HalfedgeElement()
+  HalfedgeElement()noexcept
     : opposite(INVALID_ID),
       prev(INVALID_ID),
       next(INVALID_ID),

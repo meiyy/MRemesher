@@ -6,19 +6,19 @@ namespace mesh_tools {
 
 class Plane
 {
+public:  
   enum Side
   {
     FRONT_OF_PLANE,
     ON_PLANE,
     BACK_OF_PLANE
   };
-public:
-  Plane(Point3 point, const Point3 &direction):
-    point_(std::move(point)),direction_(direction.normalize()) { }
+  Plane(Point3 point, Point3 direction):
+    point_(std::move(point)),direction_(std::move(direction)) { }
 
   Side GetSideOfPoint(const Point3 &point) const
   {
-    const auto vec = (point - point_).normalize();
+    const auto vec = (point - point_);
     const auto angle_cos = direction_.inner_product(vec);
     const double angle_eps = 1e-8;
     if(angle_cos > angle_eps)

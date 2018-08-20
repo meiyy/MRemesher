@@ -46,7 +46,7 @@ void Displayer::runLoop() {
 }
 
 void Displayer::bindKey(unsigned char key, void function(int, int)) {
-  keyboard_functions_.insert_or_assign(key, function);
+  auto pos = keyboard_functions_.insert_or_assign(key, function);
 }
 
 void Displayer::initCallBackFunctions() {
@@ -120,7 +120,7 @@ void Displayer::initParameters() {
   glFrontFace(GL_CCW);
   glCullFace(GL_BACK);
   glShadeModel(GL_FLAT);
-  glPointSize(3);
+  glPointSize(5);
 }
 
 void Displayer::getScaleSize() {

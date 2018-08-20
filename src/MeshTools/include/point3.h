@@ -7,7 +7,7 @@ class Point3 {
 public:
 
   // Constractors, destructor, assignment operator
-  Point3() {
+  Point3()noexcept {
     data_[0] = data_[1] = data_[2] = 0;
   }
 
